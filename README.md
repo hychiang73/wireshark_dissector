@@ -1,5 +1,5 @@
 ## Install
 
-Linux and MacOS - copy ```init.lua``` and ```etunnel.lua``` to ```~/.config/wireshark```
+Linux and MacOS - copy ```init.lua``` and ```kumo.lua``` to ```~/.config/wireshark```
 
-Windows - copy ```init.lua``` and ```etunnel.lua``` to ```%appdata%\wireshark```
+Windows - copy ```init.lua``` and ```kumo.lua``` to ```%appdata%\wireshark```
