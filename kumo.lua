@@ -10,6 +10,7 @@ local kumo_type = ProtoField.uint8("kumo.type", "Packet Type", base.HEX)
 local kumo_version = ProtoField.uint8("kumo.version", "Version", base.DEC)
 local kumo_ttl = ProtoField.uint8("kumo.ttl", "TTL", base.DEC)
 local kumo_flag = ProtoField.uint8("kumo.flag", "Flag", base.HEX, bat_flags, 0xf)
+local kumo_ttvn = ProtoField.uint8("kumo.ttvn", "TTVN", base.DEC)
 local kumo_seq = ProtoField.uint32("kumo.seq", "Sequence number", base.DEC)
 local kumo_orignator = ProtoField.ether("kumo.snap_da", "Originator", base.NONE)
 local kumo_snap_da = ProtoField.ether("kumo.snap_da", "SNAP DA", base.NONE)
@@ -23,7 +24,7 @@ local kumo_snap_seq = ProtoField.uint8("kumo.snap_slot", "SNAP Sequence number",
 
 
 kumo_protocol.fields = {
-    kumo_type, kumo_version, kumo_ttl, kumo_flag, kumo_seq,
+    kumo_type, kumo_version, kumo_ttl, kumo_flag, kumo_ttvn, kumo_seq,
     kumo_orignator, kumo_snap_da, kumo_snap_sa, kumo_snap_type,
     kumo_snap_cmd, kumo_snap_data_len, kumo_snap_slot,
     kumo_snap_seq
@@ -55,11 +56,18 @@ function kumo_protocol.dissector(buffer, pinfo, tree)
     subtree:add(kumo_ttl, buffer(offset, 1))
     offset = offset + 1
 
-    subtree:add(kumo_flag, buffer(offset, 1), buffer(3, 1):uint())
-    offset = offset + 1
+    if ktype_num == 0x5 then
+	    subtree:add(kumo_flag, buffer(offset, 1), buffer(3, 1):uint())
+	    offset = offset + 1
+    else
+	    subtree:add(kumo_ttvn, buffer(offset, 1))
+	    offset = offset + 1
+    end
 
-    subtree:add(kumo_seq, buffer(4, 4))
-    offset = offset + 4
+    if ktype_num == 0x5 then
+	    subtree:add(kumo_seq, buffer(4, 4))
+	    offset = offset + 4
+    end
 
     subtree:add(kumo_orignator, buffer(offset, 6))
     offset = offset + 6
